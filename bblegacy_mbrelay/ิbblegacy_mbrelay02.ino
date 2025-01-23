@@ -5,9 +5,9 @@
 #include <ModbusMaster.h>          // ไลบรารีสำหรับการใช้งาน Modbus Master
 
 // Wi-Fi and Blynk credentials
-const char ssid[] = "579smf001";   // ชื่อ Wi-Fi SSID
-const char pass[] = "0814111142";  // รหัสผ่าน Wi-Fi
-const char auth[] = "RANBbnsmWwvEmoi3HZQEVAe7bF0UJteU";  // โทเคน Blynk
+const char ssid[] = "";   // ชื่อ Wi-Fi SSID
+const char pass[] = "";  // รหัสผ่าน Wi-Fi
+const char auth[] = "";  // โทเคน Blynk
 
 // Modbus settings
 #define RXD 18  // กำหนดขา RX ของ ESP32 (เชื่อมต่อกับ TX ของอุปกรณ์ Modbus)
