@@ -1,0 +1,194 @@
+esphome:
+  name: esp32s3mbrelay01
+  friendly_name: esp32s3mbrelay01
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+substitutions:
+  esp_name: esp32s3mbrelay01
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "QXc76X8vjKemXYiiFrFUjmoxwDZ/3DUyARO5w/9idW4="
+
+ota:
+  - platform: esphome
+    password: "9e3c562a3f3c11a3becbab41e7cb659e"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: none
+  
+  manual_ip:
+    # Set this to the IP of the ESP
+    static_ip: 192.168.1.56
+    # Set this to the IP address of the router. Often ends with .1
+    gateway: 192.168.1.1
+    # The subnet of the network. 255.255.255.0 works for most home networks.
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32S3Mbrelay01"
+    password: "0814111142"
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+captive_portal:
+uart:
+  id: mod_bus
+  tx_pin: 17
+  rx_pin: 18
+  baud_rate: 9600
+  stop_bits: 1
+  parity: none
+  data_bits: 8
+
+#Modbus Sensor & Modbus Relay
+modbus:
+  flow_control_pin: 5
+  id: modbus_sensor
+
+modbus_controller:
+# Modbus device addr slave id1 - Modbus Relay
+  - id: mbid1
+    address: 0x1
+    modbus_id: modbus_sensor
+    setup_priority: -10
+    update_interval: 5s
+
+binary_sensor:
+  - platform: status
+    name: "WiFi Status"
+    id: wifi_status
+    
+switch:
+# Modbus device addr slave id2 - Modbus Relay
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW1
+    name: "SW1"
+    address: 0x00
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW2
+    name: "SW2"
+    address: 0x01
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW3
+    name: "SW3"
+    address: 0x02
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW4
+    name: "SW4"
+    address: 0x03
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW5
+    name: "SW5"
+    address: 0x04
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW6
+    name: "SW6"
+    address: 0x05
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW7
+    name: "SW7"
+    address: 0x06
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW8
+    name: "SW8"
+    address: 0x07
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW9
+    name: "SW9"
+    address: 0x08
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW10
+    name: "SW10"
+    address: 0x09
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW11
+    name: "SW11"
+    address: 0x0A
+    register_type: coil
+    bitmask: 0xFF
+
+  - platform: modbus_controller
+    modbus_controller_id: mbid1
+    id: SW12
+    name: "SW12"
+    address: 0x07
+    register_type: coil
+    bitmask: 0xFF
+    
+sensor:
+  # Uptime
+  - platform: uptime
+    name: "${esp_name} - Uptime"
+    icon: mdi:clock-outline
+    update_interval: 60s
+
+  # Wi-Fi Signal Strength in dB
+  - platform: wifi_signal
+    name: "${esp_name} - WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+
+  # Wi-Fi Signal Strength in Percentage
+  - platform: template
+    name: "${esp_name} - WiFi Signal Percent"
+    lambda: |-
+      return min(max(2 * (id(wifi_signal_db).state + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"       
