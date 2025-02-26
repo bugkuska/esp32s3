@@ -5,8 +5,8 @@
 #include <ModbusMaster.h>      // ไลบรารีสำหรับการใช้งาน Modbus Master
 
 // Wi-Fi and Blynk credentials
-#include <WiFiManager.h>         // ✅ เพิ่ม WiFiManager
-const char auth[] = "";          // โทเคน Blynk
+#include <WiFiManager.h>       // ✅ เพิ่ม WiFiManager
+const char auth[] = "";        // โทเคน Blynk
 
 // Modbus settings
 #define RXD 18       // กำหนดขา RX ของ ESP32 (เชื่อมต่อกับ TX ของอุปกรณ์ Modbus)
@@ -38,6 +38,9 @@ void debugModbus();       // ฟังก์ชันสำหรับ Debug �
 #define Widget_Btn_SW10 V10  // กำหนดปุ่ม Virtual Pin V10 สำหรับ Relay 10
 #define Widget_Btn_SW11 V11  // กำหนดปุ่ม Virtual Pin V11 สำหรับ Relay 11
 #define Widget_Btn_SW12 V12  // กำหนดปุ่ม Virtual Pin V12 สำหรับ Relay 12
+
+//On,off all relay ในปุ่มเดียว
+#define Widget_Btn_All V13  // กำหนดปุ่ม Virtual Pin V13 สำหรับ เปิดปิด relay ทั้งหมดในปุ่มเดียว
 
 // Array to track if relays are being updated from the app
 bool isUpdatingFromApp[12] = { false };
@@ -673,6 +676,48 @@ BLYNK_WRITE(Widget_Btn_SW12) {
   // รีเซ็ตตัวแปร isUpdatingFromApp[11] เป็น false
   // เพื่อระบุว่า Relay 12 ไม่ได้ถูกควบคุมจากแอปอีกต่อไป
   isUpdatingFromApp[11] = false;
+}
+
+//on-off 1-8
+BLYNK_WRITE(Widget_Btn_All) {
+  int valueSWAll = param.asInt();  // อ่านค่าจากปุ่ม (0 หรือ 1)
+  isUpdatingFromApp[0] = true;  // ป้องกันการอัปเดตซ้อน
+
+  // อ่านสถานะปัจจุบันของรีเลย์ 1-8
+  uint8_t result = node1.readCoils(0x0000, 8);
+  
+  if (result == node1.ku8MBSuccess) {
+    bool anyRelayOn = false;
+    for (int i = 0; i < 8; i++) {
+      if (node1.getResponseBuffer(i)) {
+        anyRelayOn = true;
+        break;
+      }
+    }
+
+    // ถ้ามีรีเลย์เปิดอยู่ → ปิดทั้งหมด, ถ้าทั้งหมดปิดอยู่ → เปิดทั้งหมด
+    uint8_t newState = anyRelayOn ? 0x00 : 0xFF;
+
+    // วนลูปเขียนค่าไปยังรีเลย์แต่ละตัว
+    bool success = true;
+    for (int i = 0; i < 8; i++) {
+      if (node1.writeSingleCoil(i, newState & (1 << i) ? 1 : 0) != node1.ku8MBSuccess) {
+        success = false;
+      }
+    }
+
+    if (success) {
+      Serial.println(anyRelayOn ? "All Relays OFF success" : "All Relays ON success");
+      Blynk.virtualWrite(Widget_Btn_All, !anyRelayOn); // อัปเดตสถานะปุ่ม
+    } else {
+      Serial.println("Failed to toggle all relays");
+    }
+  } else {
+    Serial.print("Failed to read relay status: ");
+    Serial.println(result);
+  }
+
+  isUpdatingFromApp[0] = false;
 }
 
 // ฟังก์ชัน loop() ทำงานในลูปอย่างต่อเนื่อง
