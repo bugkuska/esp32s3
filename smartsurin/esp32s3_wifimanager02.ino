@@ -14,7 +14,7 @@ WidgetRTC rtc;          // ✅ สร้างอ็อบเจ็กต์ RTC
 #define Date_VPin V8  // วันที่ (DD/MM/YYYY)
 
 // Wi-Fi and Blynk credentials
-const char auth[] = "JD_zF70EX3EPJ56MCjzhFFXCXI0CXX-x";  // Blynk Token
+const char auth[] = "";  // Blynk Token
 
 // GPIO Pins
 #define TXD 17
