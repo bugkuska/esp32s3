@@ -69,7 +69,6 @@ void setup() {
   Blynk.begin(auth, WiFi.SSID().c_str(), WiFi.psk().c_str(), "blynk-local-server", port); //แก้ blynk-local-server และ port
   // Set timers
   timer.setInterval(5000L, checkConnections);  // ตั้งตัวจับเวลา 5 วินาทีเพื่อเรียกใช้ฟังก์ชัน `checkConnections`
-  //timer.setInterval(2000L, debugModbus);  // ตัวจับเวลาสำหรับ Debug Modbus (ปิดการใช้งานไว้)
 }
 
 // ฟังก์ชัน BLYNK_CONNECTED()
