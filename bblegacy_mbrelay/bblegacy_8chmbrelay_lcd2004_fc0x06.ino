@@ -20,6 +20,8 @@ const char auth[] = "";  // โทเคน Blynk
 #define TXD 17       // กำหนดขา TX ของ ESP32 (เชื่อมต่อกับ RX ของอุปกรณ์ Modbus)
 ModbusMaster node1;  // สร้างออบเจกต์สำหรับใช้งาน Modbus
 
+uint8_t relayState[8] = {0}; 
+
 // Timer for periodic tasks
 BlynkTimer timer;  // ตัวจับเวลา Blynk สำหรับเรียกใช้ฟังก์ชันตามรอบเวลาที่กำหนด
 
@@ -50,9 +52,7 @@ void setup() {
   Wire.begin(8, 9); // SDA = GPIO08, SCL = GPIO9
   lcd.begin();      // แทน lcd.init();
   lcd.backlight();  // เปิด backlight
-  lcd.setCursor(0, 0);
-  lcd.print("Relay Ready!");
-
+  updateRelayStatusLCD();  // <== เพิ่มบรรทัดนี้เพื่อแสดงข้อมูลตั้งแต่เริ่มต้น
 
   // ✅ WiFiManager: ถ้าเชื่อมต่อ Wi-Fi ไม่ได้ ให้เปิด AP
   if (!wm.autoConnect("ESP32S3-Modbus")) {
@@ -105,51 +105,92 @@ void checkConnections() {
 }
 
 BLYNK_WRITE(V1) {
-  int value = param.asInt();  // 0 หรือ 1
+  int value = param.asInt();
+  relayState[0] = value;  // บันทึกสถานะ Relay 1
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0001, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
 }
-
 BLYNK_WRITE(V2) {
   int value = param.asInt();
+  relayState[1] = value;  // บันทึกสถานะ Relay 2
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0002, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
 }
-
 BLYNK_WRITE(V3) {
   int value = param.asInt();
+  relayState[2] = value;  // บันทึกสถานะ Relay 3
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0003, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
 }
-
 BLYNK_WRITE(V4) {
   int value = param.asInt();
+  relayState[3] = value;  // บันทึกสถานะ Relay 4
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0004, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
 }
-
 BLYNK_WRITE(V5) {
   int value = param.asInt();
+  relayState[4] = value;  // บันทึกสถานะ Relay 5
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0005, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
 }
-
 BLYNK_WRITE(V6) {
   int value = param.asInt();
+  relayState[5] = value;  // บันทึกสถานะ Relay 6
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0006, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
 }
-
 BLYNK_WRITE(V7) {
   int value = param.asInt();
+  relayState[6] = value;  // บันทึกสถานะ Relay 7
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0007, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
 }
-
 BLYNK_WRITE(V8) {
   int value = param.asInt();
+  relayState[7] = value;  // บันทึกสถานะ Relay 8
   uint16_t regValue = (value == 1) ? 0x0100 : 0x0200;
   node1.writeSingleRegister(0x0008, regValue);
+  updateRelayStatusLCD();  // อัปเดต LCD
+}
+void updateRelayStatusLCD() {
+  lcd.clear();
+  
+  // บรรทัดที่ 1: ข้อความคงที่
+  lcd.setCursor(0, 0);
+  lcd.print("#SMF 081-411-1142#");
+
+  // บรรทัดที่ 2: Relay 1-3
+  lcd.setCursor(0, 1);
+  lcd.print("R1:");
+  lcd.print(relayState[0] ? "ON " : "OFF");
+  lcd.print(" R2:");
+  lcd.print(relayState[1] ? "ON " : "OFF");
+  lcd.print(" R3:");
+  lcd.print(relayState[2] ? "ON " : "OFF");
+
+  // บรรทัดที่ 3: Relay 4-6
+  lcd.setCursor(0, 2);
+  lcd.print("R4:");
+  lcd.print(relayState[3] ? "ON " : "OFF");
+  lcd.print(" R5:");
+  lcd.print(relayState[4] ? "ON " : "OFF");
+  lcd.print(" R6:");
+  lcd.print(relayState[5] ? "ON " : "OFF");
+
+  // บรรทัดที่ 4: Relay 7-8
+  lcd.setCursor(0, 3);
+  lcd.print("R7:");
+  lcd.print(relayState[6] ? "ON " : "OFF");
+  lcd.print(" R8:");
+  lcd.print(relayState[7] ? "ON " : "OFF");
 }
 
 // ฟังก์ชัน loop() ทำงานในลูปอย่างต่อเนื่อง
