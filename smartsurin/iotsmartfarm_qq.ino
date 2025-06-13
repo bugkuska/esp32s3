@@ -1,9 +1,9 @@
 #include <Wire.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
-#include <BlynkSimpleEsp32.h>
-#include <ModbusMaster.h>
-#include <WiFiManager.h>
+#include <BlynkSimpleEsp32.h> //Blynk Library ให้ติดตั้งเวอร์ชั่น 0.6x เท่านั้นนะครับ Source-code นี้ใช้กับ Library verion 1.x.x ไม่ได้
+#include <ModbusMaster.h>     //สำหรับใช้เชื่อมต่อกับอุปกรณ์ Modbus
+#include <WiFiManager.h>      //ตัวจัดการ การเชื่อมต่อ Wi-Fi ไม่ต้องทำการ Hard-code ssid, password
 #include <Preferences.h>
 
 #include <TimeLib.h>    // ✅ ไลบรารีจัดการเวลา
@@ -14,21 +14,23 @@ WidgetRTC rtc;          // ✅ สร้างอ็อบเจ็กต์ RTC
 #define Date_VPin V8  // วันที่ (DD/MM/YYYY)
 
 // Wi-Fi and Blynk credentials
-const char auth[] = "";  // Blynk Token
+const char auth[] = "";  // Blynk Token เอามาจาก Project ใน App Blynk Legacy
 
 // GPIO Pins
-#define TXD 17
-#define RXD 18
+#define TXD 17     //TX เปลี่ยนGPIO ให้ตรงกับบอร์ดที่เราใช้งาน
+#define RXD 18     //RX เปลี่ยนGPIO ให้ตรงกับบอร์ดที่เราใช้งาน
+
+//GPIO เปลี่ยนให้ตรงกับบอร์ดที่เราใช้งาน
 #define RELAY1 1   // ปั๊มน้ำ
 #define RELAY2 2   // เช็คสถานะ Blynk
 #define RELAY3 41  // วาล์ว 1
 #define RELAY4 42  // วาล์ว 2
 
 // Blynk Virtual Pins
-#define Widget_Btn_SW1 V1
-#define Widget_Btn_SW2 V2
-#define Widget_Btn_SW3 V3
-#define SoilMoisture_VPin V4
+#define Widget_Btn_SW1 V1   //สวิตซ์ 1
+#define Widget_Btn_SW2 V2   //สวิตซ์ 2
+#define Widget_Btn_SW3 V3    //สวิตซ์ 3
+#define SoilMoisture_VPin V4  // เก็บและแสดงค่าความชื้นในดิน
 #define AutoManual_VPin V5     // ปุ่มเลือก Auto/Manual
 #define SoilThreshold_VPin V6  // Slider ตั้งค่าความชื้นที่ต้องการ
 
