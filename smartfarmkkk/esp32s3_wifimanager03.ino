@@ -13,7 +13,7 @@ WidgetRTC rtc;
 // =========================
 // Blynk Auth
 // =========================
-const char auth[] = "PvBfa9gNb7vDsOTe8ZYnlafPwC-HeDJH";
+const char auth[] = ""; //Token
 
 // =========================
 // GPIO Pins
@@ -206,7 +206,7 @@ void setup() {
   WiFi.mode(WIFI_STA);
   lastBlynkConnectTime = millis();
 
-  Blynk.config(auth, "159.65.5.221", 8080);
+  Blynk.config(auth, "ip-address-server", 8080); //แก้ ip-address-server
   Blynk.connect();
 
   rtc.begin();
