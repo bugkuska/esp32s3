@@ -1,0 +1,29 @@
+Relay1 > GPIO1 สำหรับ Check Blynk Connect
+Relay2 > GPIO2 สำหรับ พัดลมระบายอากาศ
+Relay3 > GPIO41 สำหรับ Valve1
+Relay4 > GPIO42 สำหรับ Valve2
+Relay5 > GPIO45 สำหรับ Valve3
+Relay6 > GPIO46 สำหรับ Valve4
+
+Local server
+IP Address : 159.65.5.221
+Mobile App port: 9443
+Hardware Port : 8080
+
+
+user: smartfarmkkk@gmail.com
+password: smartfarm@1
+
+Wi-Fi
+192.168.100.1
+User: admin
+Password: 0814111142
+
+SSID:smartfarmkkk
+Password: 0814111142
+
+Wifimanager (Smartconfig)
+192.168.4.1
+startConfigPortal("ESP32S3-Smartfarmkkk", "0814111142");
+
+
