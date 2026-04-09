@@ -48,13 +48,13 @@ void setup() {
 // =========================
 void loop() {
   readNode2();
-  delay(200);
+  delay(1000);
 
   readNode3();
-  delay(200);
+  delay(1000);
 
   readNode4();
-  delay(200);
+  delay(1000);
 
   Serial.println("======================================");
   delay(3000);
